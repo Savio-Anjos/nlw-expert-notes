@@ -2,6 +2,7 @@ import { ChangeEvent, useState } from "react";
 import logo from "./assets/logo-nlw-expert.svg";
 import { NewNoteCard } from "./components/new-note-card";
 import { NoteCart } from "./components/note-card";
+import { toast } from "sonner";
 
 interface Note {
   id: string;
@@ -29,6 +30,18 @@ export function App() {
     };
 
     const notesArray = [newNote, ...notes];
+
+    setNotes(notesArray);
+
+    localStorage.setItem("notes", JSON.stringify(notesArray));
+  }
+
+  function onNoteDeleted(id: string) {
+    const notesArray = notes.filter((note) => {
+      return note.id !== id;
+    });
+
+    toast.success("Nota apagada com sucesso!");
 
     setNotes(notesArray);
 
@@ -68,7 +81,9 @@ export function App() {
         <NewNoteCard onNoteCreated={onNoteCreated} />
 
         {filteredNotes.map((note) => {
-          return <NoteCart key={note.id} note={note} />;
+          return (
+            <NoteCart key={note.id} note={note} onNoteDeleted={onNoteDeleted} />
+          );
         })}
       </div>
     </div>
